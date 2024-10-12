@@ -1,4 +1,3 @@
-from emotion import emotion
 from gaze_tracking import GazeTracking
 from deepface import DeepFace
 import cv2
@@ -6,6 +5,10 @@ class Scan(object):
     def __init__(self):
         self.gaze = GazeTracking()
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        self.emotion_data=[0,0,0,0,0,0,0]
+        self.faces=0
+        self.attention=0
+
 
 
 
@@ -25,8 +28,8 @@ class Scan(object):
         # Detect faces in the frame
         faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
         count_head=0
-        emotion_data=[0,0,0,0,0,0,0]
-
+        self.emotion_data=[0,0,0,0,0,0,0]
+        self.faces=0
         for (x, y, w, h) in faces:
             count_head+=1
             # Extract the face ROI (Region of Interest)
@@ -40,16 +43,39 @@ class Scan(object):
             my_confidence = ""
             # Print each emotion with its confidence
             i=0
+            print(emotion_confidences.items())
+
+
+
             for emo, confidence in emotion_confidences.items():
                 if emo == emotion:
 
                     my_confidence = str(round(confidence, 2))
-                print(f"{emo}: {confidence:.2f}%")
-                emotion_data[i]+=confidence
+                #print(f"{emo}: {confidence:.2f}%")
+                if emo == "angry":
+                    self.emotion_data[0] = confidence
+                elif emo == "disgust":
+                    self.emotion_data[1] = confidence
+                elif emo == "fear":
+                    self.emotion_data[2] = confidence
+                elif emo == "happy":
+                    self.emotion_data[3] = confidence
+                elif emo == "sad":
+                    self.emotion_data[4] = confidence
+                elif emo == "surprise":
+                    self.emotion_data[5] = confidence
+                elif emo == "neutral":
+                    self.emotion_data[6] = confidence
+
+
+
+
             # Draw rectangle around face and label with predicted emotion
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
             self.gaze.refresh(face_roi)
 
+
+            self.attention+=100-((abs(self.gaze.horizontal_ratio()-50))*2)
 
             text = ""
 
@@ -79,6 +105,11 @@ class Scan(object):
             if self.gaze.horizontal_ratio():
                 cv2.putText(frame, text + " " + f"{self.gaze.horizontal_ratio() * 100: .2f}", (x, y - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        self.frame=frame
 
+        self.frame=frame
+        self.faces=count_head
+        if self.faces>0:
+            for i in range(7):
+                self.emotion_data[i]=self.emotion_data[i]/self.faces
+            self.attention=self.attention/self.faces
         return count_head
