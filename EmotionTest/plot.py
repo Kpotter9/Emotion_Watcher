@@ -4,14 +4,6 @@ import pandas as pd
 from matplotlib.pyplot import yscale
 
 fig ,axs= plt.subplots(2,4)
-axs[0,0].set_xlabel("Anger",labelpad=5,fontsize=10,color="red")
-axs[0,1].set_xlabel("Disgust",labelpad=5,fontsize=10,color="green")
-axs[0,2].set_xlabel("Surprise",labelpad=5,fontsize=10,color="orange")
-axs[0,3].set_xlabel("Sad",labelpad=5,fontsize=10,color="blue")
-axs[1,0].set_xlabel("Happy",labelpad=5,fontsize=10,color="yellow")
-axs[1,1].set_xlabel("Neutral",labelpad=5,fontsize=10,color="gray")
-axs[1,2].set_xlabel("Fear",labelpad=5,fontsize=10,color="purple")
-axs[1,3].set_xlabel("Attention",labelpad=5,fontsize=10,color="white")
 
 
 def animate(i):
