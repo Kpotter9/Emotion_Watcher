@@ -54,7 +54,7 @@ class Eye(object):
         eye = cv2.bitwise_not(black_frame, frame.copy(), mask=mask)
 
         # Cropping on the eye
-        margin = 5
+        margin = 7
         min_x = np.min(region[:, 0]) - margin
         max_x = np.max(region[:, 0]) + margin
         min_y = np.min(region[:, 1]) - margin

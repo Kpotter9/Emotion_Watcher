@@ -26,10 +26,12 @@ class Scan(object):
         rgb_frame = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2RGB)
 
         # Detect faces in the frame
-        faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.3, minNeighbors=5, minSize=(30, 30))
+        faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.05, minNeighbors=7, minSize=(10, 10))
         count_head=0
         self.emotion_data=[0,0,0,0,0,0,0]
         self.faces=0
+        self.attention=0
+
         for (x, y, w, h) in faces:
             count_head+=1
             # Extract the face ROI (Region of Interest)
@@ -71,11 +73,11 @@ class Scan(object):
 
 
             # Draw rectangle around face and label with predicted emotion
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
             self.gaze.refresh(face_roi)
 
-
-            self.attention+=100-((abs(self.gaze.horizontal_ratio()-50))*2)
+            if self.gaze.horizontal_ratio():
+                self.attention+=100-((abs(self.gaze.horizontal_ratio()*100-50))*2)
 
             text = ""
 
@@ -91,14 +93,14 @@ class Scan(object):
             right_pupil = self.gaze.pupil_right_coords()
             if right_pupil:
                 cv2.line(frame, (right_pupil[0] + x + 5, right_pupil[1] + y),
-                         (right_pupil[0] + x - 5, right_pupil[1] + y), (255, 100, 100), 2)
+                         (right_pupil[0] + x - 5, right_pupil[1] + y), (0, 0, 255), 1)
                 cv2.line(frame, (right_pupil[0] + x, right_pupil[1] + y + 5),
-                         (right_pupil[0] + x, right_pupil[1] + y - 5), (255, 100, 100), 2)
+                         (right_pupil[0] + x, right_pupil[1] + y - 5), (0, 0, 255), 1)
             if left_pupil:
                 cv2.line(frame, (left_pupil[0] + x + 5, left_pupil[1] + y), (left_pupil[0] + x - 5, left_pupil[1] + y),
-                         (255, 100, 100), 2)
+                         (0, 0, 255), 1)
                 cv2.line(frame, (left_pupil[0] + x, left_pupil[1] + y + 5), (left_pupil[0] + x, left_pupil[1] + y - 5),
-                         (255, 100, 100), 2)
+                         (0, 0, 255), 1)
 
             cv2.putText(frame, emotion + " " + my_confidence, (x, y - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255),
                         2)

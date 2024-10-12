@@ -1,8 +1,6 @@
 import cv2
-from tensorflow.python.ops.functional_ops import scan_v2
-
+import pandas as pd
 from Scan import Scan
-from matplotlib import pyplot as plt
 import numpy as np
 
 
@@ -14,7 +12,8 @@ def camera():
     data=[[],[],[],[],[],[],[],[]]
     loops=0
 
-    add=[0,0,0,0,0,0,0,0]
+    add={"anger":0,"disgust":0,"fear":0,"happy":0,"sad":0,"surprise":0,"neutral":0,"attention" :0}
+    df = pd.DataFrame(columns=["anger", "disgust", "fear", "happy", "sad", "surprise", "neutral", "attention"])
 
 
 
@@ -26,41 +25,50 @@ def camera():
         temp.append(scan.attention)
         #print(temp)
         loops = loops + 1
-        if loops%20==0:
-            for i in range(8):
-                data[i].append(add[i])
-            add = [0, 0, 0, 0, 0, 0, 0, 0]
+        add["anger"]+=scan.emotion_data[0]
+        add["disgust"] += scan.emotion_data[1]
+        add["fear"] += scan.emotion_data[2]
+        add["happy"] += scan.emotion_data[3]
+        add["sad"] += scan.emotion_data[4]
+        add["surprise"] += scan.emotion_data[5]
+        add["neutral"] += scan.emotion_data[6]
+        add["attention"] += scan.attention
+        if loops%10==0:
+            df=df._append(add,ignore_index=True)
+            df = df.sort_index()
+            add = {"anger": 0, "disgust": 0, "fear": 0, "happy": 0, "sad": 0, "surprise": 0, "neutral": 0,
+                   "attention": 0}
+            df.to_csv("Emotion.csv",index=True)
 
 
-        else:
-            for i in range(8):
-                add[i]+=temp[i]
 
         if cv2.waitKey(1) == 27 or not cv2.getWindowProperty("Camera Cap", cv2.WND_PROP_VISIBLE) >= 1:
             break
 
-    print(data)
-    print(loops)
-    plt.title("Graph")
-    plt.xlabel("idk")
-    plt.ylabel("idk")
 
-    plt.plot(data[0], label="anger")
-    plt.plot(data[1], label="disgust")
-    plt.plot(data[2], label="fear")
-    plt.plot(data[3], label="happy")
-    plt.plot(data[4], label="sad")
-    plt.plot(data[5], label="surprise")
-    plt.plot(data[6], label="neutral")
-    plt.plot(data[7], label="attention")
-    plt.legend()
+
+
+    # plt.plot(data[0], label="anger")
+    # plt.plot(data[1], label="disgust")
+    # plt.plot(data[2], label="fear")
+    # plt.plot(data[3], label="happy")
+    # plt.plot(data[4], label="sad")
+    # plt.plot(data[5], label="surprise")
+    # plt.plot(data[6], label="neutral")
+    # plt.plot(data[7], label="attention")
+    #plt.legend()
 
     #farah
-    plt.draw()
-#end farah
-    plt.show()
+
     webcam.release()
     cv2.destroyAllWindows()
+    # end farah
 camera()
+
+
+
+
+
+
 
 
