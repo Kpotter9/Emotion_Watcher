@@ -1,14 +1,18 @@
 import cv2
 import pandas as pd
 from Scan import Scan
+import sys
 import numpy as np
 
 
 
 
-def camera():
+def camera(cam):
     scan = Scan()
-    webcam = cv2.VideoCapture(0)
+    val=0
+    if(cam.isalnum()):
+       val=int(cam)
+    webcam = cv2.VideoCapture(val)
     data=[[],[],[],[],[],[],[],[]]
     loops=0
 
@@ -64,7 +68,7 @@ def camera():
     cv2.destroyAllWindows()
     # end farah
 
-camera()
+camera(sys.argv[1])
 
 
 

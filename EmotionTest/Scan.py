@@ -26,7 +26,7 @@ class Scan(object):
         rgb_frame = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2RGB)
 
         # Detect faces in the frame
-        faces = self.face_cascade.detectMultiScale(frame, scaleFactor=1.05, minNeighbors=7, minSize=(10, 10))
+        faces = self.face_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
         count_head=0
         self.emotion_data=[0,0,0,0,0,0,0]
         self.faces=0
