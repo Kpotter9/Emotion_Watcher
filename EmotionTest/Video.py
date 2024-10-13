@@ -63,6 +63,7 @@ def camera():
     webcam.release()
     cv2.destroyAllWindows()
     # end farah
+
 camera()
 
 
