@@ -13,6 +13,9 @@ def camera(cam):
     if(cam.isalnum()):
        val=int(cam)
     webcam = cv2.VideoCapture(val)
+    if not webcam.isOpened():
+        webcam = cv2.VideoCapture(0)
+
     data=[[],[],[],[],[],[],[],[]]
     loops=0
 

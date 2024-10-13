@@ -1,10 +1,11 @@
 import sys
 
-from PIL import Image
+from PIL import Image,ImageTk
 from PIL.ImageChops import screen
 import customtkinter
+from customtkinter import CTkFont
 import tkinter as tk
-from tkinter import PhotoImage, Label
+from tkinter import PhotoImage, Label, Canvas ,font
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -47,18 +48,21 @@ class Guiy:
 
         root.geometry(f"{halfWidthScreen}x{length}+0+0")
         root.iconbitmap("./images/Cyberpunk.png")
-        '''
+
         img = Image.open("images/Cyberpunk.png")
-        img = img.resize((halfWidthScreen,length))
+        img = img.resize((width,length))
         img.save("images/img.png")
         bg = PhotoImage(file="images/img.png")
 
-        my_label = Label(root,image=bg)
-        my_label.place(x=50,y=20)
+        my_canvas = Canvas(root,width = width ,height = length)
+
+        my_canvas.pack(fill = "both",expand = True)
+        my_canvas.create_image(0,0,image=bg,anchor = "nw")
+
         '''
         frame = customtkinter.CTkFrame(master=root)
         frame.pack(pady=20, padx=50, fill="both", expand=True)
-
+        '''
         label = customtkinter.CTkLabel(
             master=root, text="Big Brother's Always Watching"
         )
@@ -83,7 +87,7 @@ class Guiy:
             button.pack_forget()
             kylesButton.pack_forget()
 
-            graphFrame = customtkinter.CTkFrame(master=frame)
+            graphFrame = customtkinter.CTkFrame(master=my_canvas, width= int(halfWidthScreen*1.8))
             graphFrame.pack(pady=40, padx=0)
 
             # graph, ax = plt.subplots()
@@ -91,6 +95,7 @@ class Guiy:
 
             # plt.show()
             fig, axs = plt.subplots(2, 4)
+            fig.patch.set_facecolor('#313030')
             def animate(i):
                 df = pd.read_csv("Emotion.csv")
                 for loop in axs:
@@ -99,6 +104,8 @@ class Guiy:
                 for loop in axs:
                     for i in loop:
                         i.set_ylim([0, 1000])
+                        i.patch.set_facecolor('#313030')
+                        i.set_yticklabels([])
                 axs[0, 0].plot(
                     df["anger"],
                     color="red",
@@ -136,17 +143,24 @@ class Guiy:
             subprocess.Popen([sys.executable, "Video.py",str(cam)])
 
             stopButton = customtkinter.CTkButton(
-                master=frame, text="Terminate", command=terminal
+                master=my_canvas, text="Terminate", font=helvia,command=terminal,border_width=-5, bg_color="blue"
             )
             stopButton.pack(pady=20, padx=0)
 
+        img = Image.open("images/Cyberpunk.png")
+        img = img.resize((1,1))
+        img.save("images/img1.png")
+        bg1 =PhotoImage(file="images/img1.png")
+        img_label=Label(image=bg1)
+        helvia=CTkFont(family="Helvetica",size=30)
         button = customtkinter.CTkButton(
-            master=frame, text="Big Red Button", fg_color="red", hover_color="dark-red", command=button_event
+            font=helvia,
+            master=my_canvas,text="Internal Monitor",fg_color="#a82218",text_color="black",hover_color="#4f0f0a", border_width=-10, command=button_event
         )
         button.pack(pady=40, padx=0)
 
         kylesButton = customtkinter.CTkButton(
-            master=frame, text="External Surveilence", fg_color="red", hover_color="dark-red", command=kyle_event
+            master=my_canvas, font=helvia,text="External Surveillance", fg_color="#a82218",text_color="black", hover_color="#4f0f0a",border_width=-10, command=kyle_event
         )
         kylesButton.pack(pady=40, padx=20)
 
