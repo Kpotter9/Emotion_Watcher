@@ -29,4 +29,4 @@ def resize_img(root,len,wid):
     my_label = Label(root, image=bg)
     my_label.place(x=0, y=0, relwidth=1, relheight=1)
 '''
-#root.mainloop()
+#root.mainloop() 
